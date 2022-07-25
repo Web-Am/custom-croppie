@@ -18,15 +18,30 @@ function makeid(length: number) {
   return result;
 }
 
+class SizesModel {
+  X: number;
+  Y: number;
+  Desc: string;
+  constructor() {
+    this.X = 0;
+    this.Y = 0;
+    this.Desc = "";
+  }
+}
+
 class Modello {
   id?: string;
   url?: string;
   pic?: string;
+  sizeX?: number;
+  sizeY?: number;
 
   constructor(id: string) {
     this.id = id;
     this.url = "";
     this.pic = "";
+    this.sizeX = 0;
+    this.sizeY = 0;
   }
 }
 
@@ -46,6 +61,30 @@ export default function MyApp() {
   }, []);
 
 
+  const update01 = (x: number, y: number) => {
+
+    console.log("update01");
+    croppie?.destroy();
+    const el = document.getElementById("upload-demo");
+    if (el) {
+      let c = new Croppie(el, {
+        enableExif: true,
+        viewport: {
+          height: y,
+          width: x,
+        },
+      });
+
+      setCroppie(c);
+      c.bind({
+        url: content ? content : ""
+      }).then(function () {
+        console.log('jQuery bind complete');
+      });
+    }
+
+  }
+
   const refresh = () => {
 
     croppie?.destroy();
@@ -57,10 +96,10 @@ export default function MyApp() {
           height: sizeY,
           width: sizeX,
         },
-        boundary: {
-          height: 980,
-          width: 670,
-        }
+        // boundary: {
+        //  height: 980,
+        //  width: 670,
+        //}
       });
 
       setCroppie(c);
@@ -93,10 +132,10 @@ export default function MyApp() {
                   height: sizeY,
                   width: sizeX,
                 },
-                boundary: {
-                  height: 690,
-                  width: 690,
-                }
+                //boundary: {
+                // height: 690,
+                //  width: 690,
+                // }
               });
 
               setCroppie(c);
@@ -144,11 +183,11 @@ export default function MyApp() {
 
     croppie?.result({
       type: 'base64',
-      format: 'jpeg',
-      size: {
-        height: sizeX,
-        width: sizeY,
-      }
+      format: 'png',
+      /* size: {
+         height: sizeX,
+         width: sizeY,
+       }*/
     })
       .then((result: string) => {
         setData(
@@ -198,17 +237,11 @@ export default function MyApp() {
           </div>
         })
       }
+
       <div>
-
-
-
-
-
         <button type="button" className="btn btn-dark  mx-auto btn-lg my-5" onClick={add}>
           Aggiungi immagine
         </button>
-
-
       </div>
     </div>
 
@@ -232,14 +265,22 @@ export default function MyApp() {
             {!isLoading &&
 
               <div>
-                <div id="upload-demo" className="w-100"></div>
-                <div className='d-flex flex-column'>
-                  <input type="number" className="form-label" value={sizeX} onChange={(e) => setSizeX(Number(e.target.value))} min={0} max={3333} />
-                  <input type="range" className="form-range" value={sizeX} onChange={(e) => setSizeX(Number(e.target.value))} min={0} max={3333} />
-                  <input type="number" className="form-label" value={sizeY} onChange={(e) => setSizeY(Number(e.target.value))} min={0} max={3333} />
-                  <input type="range" className="form-range" value={sizeY} onChange={(e) => setSizeY(Number(e.target.value))} min={0} max={3333} />
+                <div id="upload-demo" className="w-100" style={{ height: 500 }}></div>
+                <div className=" d-none">
+                  <div className='d-flex flex-column'>
+                    <input type="number" className="form-label" value={sizeX} onChange={(e) => setSizeX(Number(e.target.value))} min={0} max={3333} />
+                    <input type="range" className="form-range" value={sizeX} onChange={(e) => setSizeX(Number(e.target.value))} min={0} max={3333} />
+                    <input type="number" className="form-label" value={sizeY} onChange={(e) => setSizeY(Number(e.target.value))} min={0} max={3333} />
+                    <input type="range" className="form-range" value={sizeY} onChange={(e) => setSizeY(Number(e.target.value))} min={0} max={3333} />
+                  </div>
                 </div>
-                < button className="btn btn-lg btn-success m-3" onClick={refresh} > Refresh</button>
+
+                < button className="btn btn-lg btn-success m-3 d-none" onClick={refresh} > Refresh</button>
+
+                <div className="mt-5">
+                  <button className="btn btn-lg btn-success m-3" onClick={(e) => update01(280, 280)} > 280x280</button>
+                  <button className="btn btn-lg btn-success m-3" onClick={(e) => update01(640, 220)} > 640x220</button>
+                </div>
               </div>
             }
 
@@ -251,5 +292,5 @@ export default function MyApp() {
       </div>
     </div>
 
-  </div>
+  </div >
 }
